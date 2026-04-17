@@ -6,7 +6,8 @@ from src.utils.http import get, post, put, patch as http_patch, delete
 from src.utils.middleware import authenticated_get, authenticated_post
 
 
-def test_get():
+@pytest.mark.asyncio
+async def test_get():
     with patch('src.utils.http.httpx.AsyncClient') as mock_client_class:
         mock_client = AsyncMock()
         mock_client_class.return_value.__aenter__.return_value = mock_client
@@ -14,10 +15,11 @@ def test_get():
         mock_response.json.return_value = {"data": "value"}
         mock_response.raise_for_status.return_value = None
         mock_client.get.return_value = mock_response
-        result = get("https://api.example.com/test")
+        result = await get("https://api.example.com/test")
         assert result["data"] == "value"
 
-def test_post():
+@pytest.mark.asyncio
+async def test_post():
     with patch('src.utils.http.httpx.AsyncClient') as mock_client_class:
         mock_client = AsyncMock()
         mock_client_class.return_value.__aenter__.return_value = mock_client
@@ -25,7 +27,7 @@ def test_post():
         mock_response.json.return_value = {"id": "123"}
         mock_response.raise_for_status.return_value = None
         mock_client.post.return_value = mock_response
-        result = post("https://api.example.com/test", {"key": "value"})
+        result = await post("https://api.example.com/test", {"key": "value"})
         assert result["id"] == "123"
 
 @pytest.mark.asyncio
